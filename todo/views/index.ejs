@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <form action="/insert" method="post">
+    <input type="text" name="name">TODO
+    <button>投稿</button>
+    </form>
+    <div>こんにちは<%= name %>さん</div>
+    <table>
+    <% for(var i in title){%>
+      <tr>
+        <td><%= title[i].todo %>
+          <form action="/edit" method="get">
+            <!-- 送信する内容がパラメータに乗る -->
+            <input type="hidden" name="id" id="" value=<%= title[i].id %> >
+            <div><button>更新</button></div>
+          </form>
+        <form action="/delete" method="post">
+          <input type="hidden" name="id" id="" value=<%= title[i].id %>>
+          <div><button>削除</button></div>
+        </form>
+        </td>
+      </tr>
+    <%}%>
+  </table>
+
+  </body>
+</html>
