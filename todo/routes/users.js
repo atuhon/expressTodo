@@ -1,32 +1,6 @@
-/**
- * 登録する
- * それをuser.jsに送る
- * DBに登録する
- * ログインページに遷移しログインしてもらう
- * 入力したidとパスワードを取得。
- * DBと突き合わせてアカウントを特定する。
- * セッションを渡す（そのidとnameをセッションに入れる）
- * セッションを利用して「こんにちは○○さん」を出す
- * エラーの場合はバリデーションをいれる
- * ーーーーーー
- * 表示されるTodoの内容はその人のアカウントの内容のみにする
- * ログアウトボタンを押すとログアウトする
- */
 
-/**
- * 
- * MySQLとセッションを同期させる
- * １．セッションストアを作る→セッション専用テーブルが作成される
- * ２．
- * 
- */
-/**
- * なんかmysqlが読み込まれないとき（読み込みが終わらない）
- *   構文が間違っている
- *   var sql="insert into users(name,password) values(?　?)";→? ?の間に,がない
- *   input name=name→名前とプロパティが被っている
- * 　
- *  */ 
+
+
 
 var express = require("express");
 var connect= require("./db");
@@ -39,12 +13,39 @@ router.get("/", function (req, res, next) {
       }
     );
   router.post("/login",(req,res)=>{
-    var id=req.body["id"];
+    var password=req.body["password"];
     var name=req.body["name"];
-    req.session.session_cookie_name=[id,name];
-    var data={id:req.session.msg};//idをセッションに入れる
-    res.render("login",data);
-    res.redirect("/");
+    const sql="select * from users";
+
+    const isId=connect.query(sql,(err,row,field)=>{
+      console.log(field);
+      row.forEach(element => {
+       console.log(element.name);
+       
+       if(element.name===name && element.password===password){
+        console.log("フィルターできているか",element.name);//フィルターされた値が入る
+        req.session.name=element.name;
+        req.session.loginid=element.id;
+        
+        console.log("idの確認",element.id);
+        res.redirect("/");//renderの手前に置く
+        res.render("login");
+        req.session.name=element.name;
+        console.log("通った");
+
+        
+
+       }
+
+        
+      });
+    });
+ 
+
+
+
+
+
   })
 router.get("/regi",function (req,res,next){
 res.render("regi");

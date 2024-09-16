@@ -4,11 +4,16 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
+ 
+
+  こんにちは<%= loginName %>さん<form action="/logout" method="post" style="display: inline;"> <button style="display: inline;">ログアウトする</button></form>
+
     <form action="/insert" method="post">
     <input type="text" name="name">TODO
     <button>投稿</button>
     </form>
-    <div>こんにちは<%= name %>さん</div>
+
+
     <table>
     <% for(var i in title){%>
       <tr>

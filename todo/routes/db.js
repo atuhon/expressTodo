@@ -8,7 +8,7 @@
  */
 const mysql = require('mysql2');
 const session = require("express-session");
-const MySQLStore = require('express-mysql-session')(session); //追加分
+
 
 // MySQL connection setup
 const conections =  mysql.createConnection({

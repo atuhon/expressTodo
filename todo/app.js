@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mysql= require("mysql2");
 const session=require("express-session");
-const MySQLStore = require('express-mysql-session')(session); //追加分
+const MySQLStore = require('express-mysql-session')(session);  //SQLに保存する際の追加分
 var connect= require("./routes/db");
 mysql.createPool(connect);
 const sess={
