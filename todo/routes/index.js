@@ -23,6 +23,10 @@ Sessionを使用して他の人と内容が被っていないか確認→OK
 バリデーションを使って名前（それかメアドに変更し）の重複登録を禁止する。入力されていない項目のエラー発出
 更新後→「更新しました」のポップアップ
 削除後→「削除しました」のポップアップ
+ログインしていないとtodo画面に遷移できないように設定→OK
+ログイン時にDBにnameの入力が無ければリダイレクト→OK
+登録時にすでに同じnameが登録されていればリダイレクト→OK
+passwordを忘れた場合の処理
 消化率の表示
 メッセージボード
 
@@ -72,9 +76,23 @@ var router = express.Router();
 
 router.get('/', (req, res) => {
   let loginId=req.session.loginid
+  console.log("idは入っているのか",loginId)
+  if(loginId===undefined){
+    console.log("sessionがない");
+
+ return   res.redirect("/user");//動作を強制したい場合はreturnを付ける
+   };
+
+ 
   const sql='SELECT * FROM todolist where user_id= ?';
   const select=conet.query(sql,loginId);
-  console.log(select.sql);
+
+  if(select===false){
+    console.log("通ってない")
+    return res.redirect("/user");
+
+  }
+
   const newSQL=select.sql;
   conet.query(newSQL,(error, results) => {
       console.log(results);
@@ -86,6 +104,7 @@ router.get('/', (req, res) => {
     }
   );
  });
+
 router.post("/insert",(req,res)=>{
 
 
@@ -104,6 +123,11 @@ res.redirect("/");
 });
 
 router.post("/delete",(req,res)=>{
+  if(loginId===undefined){
+    console.log("sessionがない");
+
+ return   res.redirect("/user");
+  };
   const del='delete from todolist where id=?'
   const id=req.body.id
   console.log("idを出せ",id);
@@ -111,6 +135,11 @@ router.post("/delete",(req,res)=>{
   res.redirect("/");
 });
 router.post("/update",(req,res)=>{
+  if(loginId===undefined){
+    console.log("sessionがない");
+
+ return   res.redirect("/user");
+  };
   console.log("idの値",req.body.id,"中身",req.body.update)
   req.session.destroy();
   const data=req.body.update
@@ -121,6 +150,11 @@ conet.query(sql,[data,id]);//2つ以上は配列型にする
     res.redirect("/");
 });
 router.get("/edit",(req,res)=>{//getでidを送るとパラメータとして出てくる
+  if(loginId===undefined){
+    console.log("sessionがない");
+
+ return   res.redirect("/user");
+  };
   const urls=url.parse(req.url,true);
   const urlParts=urls.query
   console.log("editidの値",urlParts.id);
@@ -131,6 +165,7 @@ router.get("/edit",(req,res)=>{//getでidを送るとパラメータとして出
 
 });
 router.post("/logout",(req,res)=>{
+
   req.session.destroy();
   res.redirect("/user");
   // let sessionId=req.session.loginid;
